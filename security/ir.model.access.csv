@@ -1,0 +1,15 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_type_de_propriete_user,estate.type.propriete.user,model_estate_type_propriete,estate.group_estate_user,1,0,0,0
+access_type_de_propriete_manager,estate.type.propriete.manager,model_estate_type_propriete,estate.group_estate_manager,1,1,1,1
+access_type_de_piece_user,estate.type.piece.user,model_estate_type_piece,estate.group_estate_user,1,0,0,0
+access_type_de_piece_manager,estate.type.piece.manager,model_estate_type_piece,estate.group_estate_manager,1,1,1,1
+access_propriete_user,estate.propriete.user,model_estate_propriete,estate.group_estate_user,1,1,1,0
+access_propriete_manager,estate.propriete.manager,model_estate_propriete,estate.group_estate_manager,1,1,1,1
+access_location_user,estate.location.user,model_estate_location,estate.group_estate_user,1,1,1,0
+access_location_manager,estate.location.manager,model_estate_location,estate.group_estate_manager,1,1,1,1
+access_etat_des_lieux_user,estate.etat.des.lieux.user,model_estate_etat_des_lieux,estate.group_estate_user,1,1,1,0
+access_etat_des_lieux_manager,estate.etat.des.lieux.manager,model_estate_etat_des_lieux,estate.group_estate_manager,1,1,1,1
+access_commodite_user,estate.commodite.user,model_estate_commodite,estate.group_estate_user,1,1,1,0
+access_commodite_manager,estate.commodite.manager,model_estate_commodite,estate.group_estate_manager,1,1,1,1
+access_piece_user,estate.piece.user,model_estate_piece,estate.group_estate_user,1,1,1,0
+access_piece_manager,estate.piece.manager,model_estate_piece,estate.group_estate_manager,1,1,1,1

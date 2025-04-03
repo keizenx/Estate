@@ -1,0 +1,13 @@
+<odoo>
+  <data>
+
+    <menuitem name="estate" id="estat_menu_root" web_icon="estate,static/description/icon.png"/>
+    <menuitem name="Locations" id="location_menu" parent="estat_menu_root" sequence="1" action="location_action"/>
+    <menuitem name="Propriétés" id="propriete_menu" parent="estat_menu_root" sequence="2" action="propriete_action"/>
+    <menuitem name="Locataires" id="locataire_menu" parent="estat_menu_root" sequence="3" action="locataire_action"/>
+    <menuitem name="Configuration" id="estat_config" parent="estat_menu_root" sequence="1000"/>
+    <menuitem name="Types de Propriété" id="type_de_propriete" parent="estat_config" sequence="1" action="type_de_propriete_action"/>
+    <menuitem name="Types de Pièce" id="type_de_piece" parent="estat_config" sequence="2" action="type_de_piece_action"/>
+
+  </data>
+</odoo>

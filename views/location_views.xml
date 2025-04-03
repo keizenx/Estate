@@ -1,0 +1,87 @@
+<odoo>
+  <data>
+
+    <record model="ir.ui.view" id="estate_location_list">
+      <field name="name">estate.location.list</field>
+      <field name="model">estate.location</field>
+      <field name="arch" type="xml">
+        <list>
+          <field name="name"/>
+          <field name="locataire_id"/>
+          <field name="propriete_id"/>
+          <field name="date_de_reservation"/>
+          <field name="date_de_debut"/>
+          <field name="duree_en_annee"/>
+          <field name="date_de_fin"/>
+          <field name="frequence"/>
+          <field name="loyer"/>
+          <field name="etat" widget="badge"
+                        decoration-info="etat == 'brouillon'"
+                        decoration-success="etat == 'en_cours'"
+                        decoration-danger="etat  in ['annulee', 'terminee']"
+                        decoration-warning="etat == 'validee'"/>
+        </list>
+      </field>
+    </record>
+
+    <record model="ir.ui.view" id="estate_location_form">
+      <field name="name">estate.location.form</field>
+      <field name="model">estate.location</field>
+      <field name="arch" type="xml">
+        <form>
+            <header>
+                <!-- Affichage de la barre d'état -->
+                <field name="etat" widget="statusbar"/>
+                <!-- Boutons d'action pour changer l'état, sans conditions de visibilité -->
+                <button name="action_valider" type="object" string="Valider" class="oe_highlight"/>
+                <button name="action_commencer" type="object" string="Commencer" class="oe_highlight"/>
+                <button name="action_terminee" type="object" string="Terminer" class="oe_highlight"/>
+                <button name="action_annuler" type="object" string="Annuler" class="oe_link"/>
+            </header>
+            <sheet>
+                <div class="oe_title">
+                    <h1>
+                        <field widget="text" name="name" placeholder="LOC/PRO1/0001"/>
+                    </h1>
+                </div>
+                <group>
+                    <group>
+                        <field name="locataire_id" required="1"/>
+                        <field name="propriete_id" required="1"/>
+                        <field name="frequence"/>
+                        <field name="loyer"/>
+                    </group>
+                    <group>
+                        <field name="date_de_reservation"/>
+                        <field name="date_de_debut"/>
+                        <field name="duree_en_annee"/>
+                        <field name="date_de_fin"/>
+                    </group>
+                </group>
+                <notebook>
+                    <page name="etats_des_lieux" string="États des Lieux">
+                        <field name="etats_des_lieux_ids">
+                            <list>
+                                <field name="name"/>
+                                <field name="type"/>
+                                <field name="date"/>
+                                <field name="responsable_id"/>
+                            </list>
+                        </field>
+                    </page>
+                </notebook>
+            </sheet>
+            <!-- Chatter -->
+            <chatter/>
+        </form>
+      </field>
+    </record>
+
+    <record model="ir.actions.act_window" id="location_action">
+      <field name="name">Locations</field>
+      <field name="res_model">estate.location</field>
+      <field name="view_mode">list,form</field>
+    </record>
+
+  </data>
+</odoo>

@@ -1,0 +1,55 @@
+<odoo>
+  <data>
+
+    <record model="ir.ui.view" id="type_de_propriete_list">
+      <field name="name">type.propriete.list</field>
+      <field name="model">estate.type.propriete</field>
+      <field name="arch" type="xml">
+        <list>
+          <field name="name"/>
+          <field name="description"/>
+        </list>
+      </field>
+    </record>
+
+    <record model="ir.ui.view" id="type_de_propriete_form">
+      <field name="name">type.propriete.form</field>
+      <field name="model">estate.type.propriete</field>
+      <field name="arch" type="xml">
+        <form>
+            <sheet>
+                <group>
+                    <group>
+                        <field name="name" required="1"/>
+                    </group>
+                    <group>
+                        <field name="description"/>
+                    </group>
+                </group>
+                <notebook>
+                    <page name="proprietes" string="Propriétés">
+                        <field name="propriete_ids">
+                            <list>
+                                <field name="name"/>
+                                <field name="superficie"/>
+                                <field name="loyer_mensuel"/>
+                            </list>
+                        </field>
+                    </page>
+                </notebook>
+            </sheet>
+            <!-- Chatter -->
+            <chatter/>
+        </form>
+      </field>
+    </record>
+
+
+    <record model="ir.actions.act_window" id="type_de_propriete_action">
+      <field name="name">Type de Propriété</field>
+      <field name="res_model">estate.type.propriete</field>
+      <field name="view_mode">list,form</field>
+    </record>
+
+  </data>
+</odoo>

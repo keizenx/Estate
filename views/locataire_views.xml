@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Inheritance du formulaire partenaire pour ajouter l'onglet "Locations" -->
+    <record id="res_partner_form_inherit" model="ir.ui.view">
+        <field name="name">res.partner.form.inherit.locataires</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="arch" type="xml">
+            <!-- On ajoute l'onglet "Locations" avant la page "Internal Notes" -->
+            <page name="internal_notes" position="before">
+                <page name="locations" string="Locations">
+                    <field name="location_ids">
+                        <list editable="bottom" readonly="True">
+                            <field name="name"/>
+                            <field name="propriete_id"/>
+                            <field name="date_de_reservation"/>
+                            <field name="date_de_debut"/>
+                            <field name="duree_en_annee"/>
+                            <field name="date_de_fin"/>
+                            <field name="frequence"/>
+                            <field name="loyer"/>
+                        </list>
+                    </field>
+                </page>
+            </page>
+            <!-- On place le champ "est_un_locataire" en mode invisible pour le suivi -->
+            <field name="category_id" position="after">
+                <field name="est_un_locataire" widget="boolean_toggle" invisible="1"/>
+            </field>
+        </field>
+    </record>
+
+    <!-- Action pour le menu "Locataires" qui filtre uniquement ceux marqués comme locataires -->
+    <record model="ir.actions.act_window" id="locataire_action">
+        <field name="name">Locataires</field>
+        <field name="res_model">res.partner</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('est_un_locataire', '=', True)]</field>
+        <field name="context">{'est_un_locataire': True}</field>
+    </record>
+</odoo>

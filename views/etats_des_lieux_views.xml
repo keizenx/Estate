@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <data>
+    <!-- Vue liste des états des lieux -->
+    <record id="view_etat_des_lieux_tree" model="ir.ui.view">
+      <field name="name">estate.etat.des.lieux.tree</field>
+      <field name="model">estate.etat.des.lieux</field>
+      <field name="arch" type="xml">
+        <tree string="États des Lieux">
+          <field name="name"/>
+          <field name="type"/>
+          <field name="date"/>
+          <field name="responsable_id"/>
+          <field name="location_id"/>
+        </tree>
+      </field>
+    </record>
+
+    <!-- Vue formulaire des états des lieux -->
+    <record id="view_etat_des_lieux_form" model="ir.ui.view">
+      <field name="name">estate.etat.des.lieux.form</field>
+      <field name="model">estate.etat.des.lieux</field>
+      <field name="arch" type="xml">
+        <form string="État des Lieux">
+          <header>
+            <!-- Boutons d'action si besoin -->
+          </header>
+          <sheet>
+            <group>
+              <group>
+                <field name="name" required="1"/>
+                <field name="type" required="1"/>
+                <field name="date"/>
+              </group>
+              <group>
+                <field name="responsable_id"/>
+                <field name="location_id"/>
+              </group>
+            </group>
+            <!-- Groupe pour afficher les photos -->
+            <group string="Photos">
+              <field name="photo_entree" widget="image" class="oe_avatar" options="{'preview_image': 'photo_entree'}"/>
+              <field name="photo_sortie" widget="image" class="oe_avatar" options="{'preview_image': 'photo_sortie'}"/>
+            </group>
+          </sheet>
+          <notebook>
+            <!-- Autres pages si nécessaire -->
+          </notebook>
+          <footer>
+            <button string="Sauvegarder" type="object" class="oe_highlight"/>
+            <button string="Annuler" class="oe_link" special="cancel"/>
+          </footer>
+        </form>
+      </field>
+    </record>
+
+    <!-- Action pour accéder aux États des Lieux -->
+    <record model="ir.actions.act_window" id="action_etat_des_lieux">
+      <field name="name">États des Lieux</field>
+      <field name="res_model">estate.etat.des.lieux</field>
+      <field name="view_mode">tree,form</field>
+    </record>
+  </data>
+</odoo>

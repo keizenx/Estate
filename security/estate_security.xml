@@ -1,0 +1,16 @@
+<!-- file: estate_security.xml -->
+<odoo>
+    <!-- Groupe "Estate User" -->
+    <record id="group_estate_user" model="res.groups">
+        <field name="name">Estate User</field>
+    </record>
+
+    <!-- Groupe "Estate Manager" 
+         (qui hérite du groupe Estate User, pour être sûr qu'un Manager 
+         a aussi les droits de base d'un User si besoin) 
+    -->
+    <record id="group_estate_manager" model="res.groups">
+        <field name="name">Estate Manager</field>
+        <field name="implied_ids" eval="[(4, ref('group_estate_user'))]"/>
+    </record>
+</odoo>
