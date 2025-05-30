@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Define the report -->
+        <record id="report_etat_des_lieux" model="ir.actions.report">
+            <field name="name">État des lieux</field>
+            <field name="model">estate.etat.des.lieux</field>
+            <field name="report_type">qweb-pdf</field>
+            <field name="report_name">Estate_sk.report_etat_des_lieux_document</field>
+            <field name="report_file">Estate_sk.report_etat_des_lieux_document</field>
+            <field name="binding_model_id" ref="model_estate_etat_des_lieux"/>
+            <field name="binding_type">report</field>
+        </record>
+
+        <!-- QWeb report template -->
+        <template id="report_etat_des_lieux_document">
+            <t t-call="web.html_container">
+                <t t-foreach="docs" t-as="doc">
+                    <t t-call="web.external_layout">
+                        <div class="page">
+                            <h2 class="text-center">État des lieux <t t-if="doc.type == 'entree'">d'entrée</t><t t-else="">de sortie</t></h2>
+                            
+                            <!-- Header Information -->
+                            <div class="row mt32 mb32">
+                                <div class="col-6">
+                                    <strong>Numéro:</strong> <span t-field="doc.name"/><br/>
+                                    <strong>Date:</strong> <span t-field="doc.date"/><br/>
+                                    <strong>Responsable:</strong> <span t-field="doc.responsable_id"/><br/>
+                                </div>
+                                <div class="col-6">
+                                    <strong>Location:</strong> <span t-field="doc.location_id"/><br/>
+                                    <strong>Locataire:</strong> <span t-field="doc.location_id.locataire_id"/><br/>
+                                    <strong>Propriété:</strong> <span t-field="doc.location_id.propriete_id"/><br/>
+                                </div>
+                            </div>
+                            
+                            <!-- Observations générales -->
+                            <h3>Observations générales</h3>
+                            <p t-field="doc.description"/>
+                            
+                            <!-- Commodités -->
+                            <h3>Commodités vérifiées</h3>
+                            <table class="table table-sm o_main_table">
+                                <thead>
+                                    <tr>
+                                        <th>Nom</th>
+                                        <th>Pièce</th>
+                                        <th>Description</th>
+                                        <th>Image</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr t-foreach="doc.commodite_ids" t-as="commodite">
+                                        <td><span t-field="commodite.name"/></td>
+                                        <td><span t-field="commodite.piece_id"/></td>
+                                        <td><span t-field="commodite.description"/></td>
+                                        <td>
+                                            <img t-if="commodite.image" t-att-src="image_data_uri(commodite.image)" style="max-height: 70px;"/>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            
+                            <!-- Images -->
+                            <h3>Images de l'état des lieux</h3>
+                            <div class="row">
+                                <t t-foreach="doc.image_ids" t-as="img">
+                                    <div class="col-4 mb-3 text-center">
+                                        <img t-if="img.image" t-att-src="image_data_uri(img.image)" style="max-height: 150px;"/><br/>
+                                        <strong><span t-field="img.name"/></strong><br/>
+                                        <span t-if="img.commodite_id">Commodité: <span t-field="img.commodite_id"/></span><br/>
+                                        <span t-field="img.notes"/>
+                                    </div>
+                                </t>
+                            </div>
+                            
+                            <!-- Signatures -->
+                            <div class="row mt32 mb32">
+                                <div class="col-6 text-center">
+                                    <p>Le responsable:</p>
+                                    <p>___________________________</p>
+                                    <p t-field="doc.responsable_id"/>
+                                </div>
+                                <div class="col-6 text-center">
+                                    <p>Le locataire:</p>
+                                    <p>___________________________</p>
+                                    <p t-field="doc.location_id.locataire_id"/>
+                                </div>
+                            </div>
+                            
+                        </div>
+                    </t>
+                </t>
+            </t>
+        </template>
+    </data>
+</odoo> 

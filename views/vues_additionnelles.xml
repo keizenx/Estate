@@ -1,0 +1,292 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Vues supplémentaires pour les Locations -->
+    <record id="estate_location_kanban_view" model="ir.ui.view">
+        <field name="name">estate.location.kanban</field>
+        <field name="model">estate.location</field>
+        <field name="priority">900</field>
+        <field name="arch" type="xml">
+            <kanban string="Locations" default_group_by="propriete_id" sample="1">
+                <field name="id"/>
+                <field name="name"/>
+                <field name="propriete_id"/>
+                <field name="locataire_id"/>
+                <field name="date_de_debut"/>
+                <field name="date_de_fin"/>
+                <field name="loyer"/>
+                <templates>
+                    <t t-name="kanban-box">
+                        <div class="oe_kanban_global_click o_kanban_record_has_image_fill">
+                            <div class="oe_kanban_details">
+                                <strong class="o_kanban_record_title mb-1">
+                                    <field name="name"/>
+                                </strong>
+                                <div class="mb-1">
+                                    <b>Locataire:</b> <field name="locataire_id"/>
+                                </div>
+                                <div class="mb-1">
+                                    <b>Période:</b> <field name="date_de_debut"/> à <field name="date_de_fin"/>
+                                </div>
+                                <div>
+                                    <b>Loyer:</b> <field name="loyer"/>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <record id="estate_location_pivot_view" model="ir.ui.view">
+        <field name="name">estate.location.pivot</field>
+        <field name="model">estate.location</field>
+        <field name="priority">900</field>
+        <field name="arch" type="xml">
+            <pivot string="Analyse des locations">
+                <field name="propriete_id" type="row"/>
+                <field name="date_de_debut" type="col"/>
+                <field name="loyer" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+    <record id="estate_location_graph_view" model="ir.ui.view">
+        <field name="name">estate.location.graph</field>
+        <field name="model">estate.location</field>
+        <field name="priority">900</field>
+        <field name="arch" type="xml">
+            <graph string="Graphique des locations">
+                <field name="propriete_id"/>
+                <field name="loyer" type="measure"/>
+            </graph>
+        </field>
+    </record>
+
+    <!-- Vues supplémentaires pour les Propriétés -->
+    <record id="estate_propriete_kanban_view" model="ir.ui.view">
+        <field name="name">estate.propriete.kanban</field>
+        <field name="model">estate.propriete</field>
+        <field name="priority">900</field>
+        <field name="arch" type="xml">
+            <kanban string="Propriétés" sample="1">
+                <field name="id"/>
+                <field name="name"/>
+                <field name="commune"/>
+                <field name="quartier"/>
+                <field name="type_id"/>
+                <field name="superficie"/>
+                <field name="loyer_mensuel"/>
+                <templates>
+                    <t t-name="kanban-box">
+                        <div class="oe_kanban_global_click o_kanban_record_has_image_fill">
+                            <div class="oe_kanban_details">
+                                <strong class="o_kanban_record_title mb-1">
+                                    <field name="name"/>
+                                </strong>
+                                <div class="mb-1">
+                                    <span><field name="commune"/>, <field name="quartier"/></span>
+                                </div>
+                                <div class="mb-1">
+                                    <span><field name="type_id"/> - <field name="superficie"/> m²</span>
+                                </div>
+                                <div>
+                                    <b>Loyer:</b> <field name="loyer_mensuel"/>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <record id="estate_propriete_pivot_view" model="ir.ui.view">
+        <field name="name">estate.propriete.pivot</field>
+        <field name="model">estate.propriete</field>
+        <field name="priority">900</field>
+        <field name="arch" type="xml">
+            <pivot string="Analyse des propriétés">
+                <field name="type_id" type="row"/>
+                <field name="commune" type="col"/>
+                <field name="loyer_mensuel" type="measure"/>
+                <field name="superficie" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+    <record id="estate_propriete_graph_view" model="ir.ui.view">
+        <field name="name">estate.propriete.graph</field>
+        <field name="model">estate.propriete</field>
+        <field name="priority">900</field>
+        <field name="arch" type="xml">
+            <graph string="Graphique des propriétés">
+                <field name="type_id"/>
+                <field name="loyer_mensuel" type="measure"/>
+            </graph>
+        </field>
+    </record>
+
+    <!-- Vues supplémentaires pour les États des lieux -->
+    <record id="estate_etat_des_lieux_kanban_view" model="ir.ui.view">
+        <field name="name">estate.etat.des.lieux.kanban</field>
+        <field name="model">estate.etat.des.lieux</field>
+        <field name="priority">900</field>
+        <field name="arch" type="xml">
+            <kanban string="États des lieux" default_group_by="type" sample="1">
+                <field name="id"/>
+                <field name="name"/>
+                <field name="location_id"/>
+                <field name="propriete_id"/>
+                <field name="date"/>
+                <field name="type"/>
+                <templates>
+                    <t t-name="kanban-box">
+                        <div class="oe_kanban_global_click">
+                            <div class="oe_kanban_details">
+                                <strong class="o_kanban_record_title mb-1">
+                                    <field name="name"/>
+                                </strong>
+                                <div class="mb-1">
+                                    <b>Propriété:</b> <field name="propriete_id"/>
+                                </div>
+                                <div class="mb-1">
+                                    <b>Date:</b> <field name="date"/>
+                                </div>
+                                <div>
+                                    <b>Type:</b> <field name="type"/>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <record id="estate_etat_des_lieux_pivot_view" model="ir.ui.view">
+        <field name="name">estate.etat.des.lieux.pivot</field>
+        <field name="model">estate.etat.des.lieux</field>
+        <field name="priority">900</field>
+        <field name="arch" type="xml">
+            <pivot string="Analyse des états des lieux">
+                <field name="propriete_id" type="row"/>
+                <field name="type" type="col"/>
+                <field name="date" type="measure" interval="month"/>
+            </pivot>
+        </field>
+    </record>
+
+    <!-- Vues supplémentaires pour les Factures -->
+    <record id="estate_facture_kanban_view" model="ir.ui.view">
+        <field name="name">estate.facture.kanban</field>
+        <field name="model">estate.facture</field>
+        <field name="priority">900</field>
+        <field name="arch" type="xml">
+            <kanban string="Factures" default_group_by="etat" sample="1">
+                <field name="id"/>
+                <field name="name"/>
+                <field name="location_id"/>
+                <field name="locataire_id"/>
+                <field name="date"/>
+                <field name="montant"/>
+                <field name="etat"/>
+                <templates>
+                    <t t-name="kanban-box">
+                        <div class="oe_kanban_global_click">
+                            <div class="oe_kanban_details">
+                                <strong class="o_kanban_record_title mb-1">
+                                    <field name="name"/>
+                                </strong>
+                                <div class="mb-1">
+                                    <b>Locataire:</b> <field name="locataire_id"/>
+                                </div>
+                                <div class="mb-1">
+                                    <b>Date:</b> <field name="date"/>
+                                </div>
+                                <div>
+                                    <b>Montant:</b> <field name="montant"/>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <record id="estate_facture_pivot_view" model="ir.ui.view">
+        <field name="name">estate.facture.pivot</field>
+        <field name="model">estate.facture</field>
+        <field name="priority">900</field>
+        <field name="arch" type="xml">
+            <pivot string="Analyse des factures">
+                <field name="date" type="row" interval="month"/>
+                <field name="etat" type="col"/>
+                <field name="montant" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+    <record id="estate_facture_graph_view" model="ir.ui.view">
+        <field name="name">estate.facture.graph</field>
+        <field name="model">estate.facture</field>
+        <field name="priority">900</field>
+        <field name="arch" type="xml">
+            <graph string="Graphique des factures">
+                <field name="date" interval="month"/>
+                <field name="montant" type="measure"/>
+            </graph>
+        </field>
+    </record>
+
+    <!-- Vues supplémentaires pour les Rappels -->
+    <record id="estate_rappel_kanban_view" model="ir.ui.view">
+        <field name="name">estate.rappel.kanban</field>
+        <field name="model">estate.rappel</field>
+        <field name="priority">900</field>
+        <field name="arch" type="xml">
+            <kanban string="Rappels" default_group_by="etat" sample="1">
+                <field name="id"/>
+                <field name="name"/>
+                <field name="date"/>
+                <field name="motif"/>
+                <field name="description"/>
+                <field name="etat"/>
+                <templates>
+                    <t t-name="kanban-box">
+                        <div class="oe_kanban_global_click">
+                            <div class="oe_kanban_details">
+                                <strong class="o_kanban_record_title mb-1">
+                                    <field name="name"/>
+                                </strong>
+                                <div class="mb-1">
+                                    <b>Date:</b> <field name="date"/>
+                                </div>
+                                <div class="mb-1">
+                                    <b>Motif:</b> <field name="motif"/>
+                                </div>
+                                <div>
+                                    <b>Statut:</b> <field name="etat"/>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <record id="estate_rappel_pivot_view" model="ir.ui.view">
+        <field name="name">estate.rappel.pivot</field>
+        <field name="model">estate.rappel</field>
+        <field name="priority">900</field>
+        <field name="arch" type="xml">
+            <pivot string="Analyse des rappels">
+                <field name="date" type="row" interval="month"/>
+                <field name="etat" type="col"/>
+                <field name="id" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+</odoo> 

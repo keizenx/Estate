@@ -1,16 +1,28 @@
-<!-- file: estate_security.xml -->
+<?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <!-- Groupe "Estate User" -->
-    <record id="group_estate_user" model="res.groups">
-        <field name="name">Estate User</field>
-    </record>
+    <data noupdate="0">
+        <!-- Catégorie d'accès pour le module Estate -->
+        <record id="module_category_estate" model="ir.module.category">
+            <field name="name">Estate</field>
+            <field name="description">Catégorie pour la gestion immobilière</field>
+            <field name="sequence">10</field>
+        </record>
 
-    <!-- Groupe "Estate Manager" 
-         (qui hérite du groupe Estate User, pour être sûr qu'un Manager 
-         a aussi les droits de base d'un User si besoin) 
-    -->
-    <record id="group_estate_manager" model="res.groups">
-        <field name="name">Estate Manager</field>
-        <field name="implied_ids" eval="[(4, ref('group_estate_user'))]"/>
-    </record>
-</odoo>
+        <!-- Groupe utilisateur standard -->
+        <record id="group_estate_user" model="res.groups">
+            <field name="name">Utilisateur</field>
+            <field name="category_id" ref="module_category_estate"/>
+            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+            <field name="comment">Les utilisateurs standard peuvent accéder aux types de propriété et de pièces, modifier, lire et créer des enregistrements mais ne peuvent pas les supprimer.</field>
+        </record>
+
+        <!-- Groupe administrateur -->
+        <record id="group_estate_admin" model="res.groups">
+            <field name="name">Administrateur</field>
+            <field name="category_id" ref="module_category_estate"/>
+            <field name="implied_ids" eval="[(4, ref('group_estate_user'))]"/>
+            <field name="users" eval="[(4, ref('base.user_root')), (4, ref('base.user_admin'))]"/>
+            <field name="comment">Les administrateurs ont des droits complets, y compris la suppression, et peuvent gérer les villes.</field>
+        </record>
+    </data>
+</odoo> 

@@ -1,64 +1,263 @@
-<?xml version="1.0" encoding="utf-8"?>
 <odoo>
   <data>
-    <!-- Vue liste des états des lieux -->
-    <record id="view_etat_des_lieux_tree" model="ir.ui.view">
-      <field name="name">estate.etat.des.lieux.tree</field>
+
+    <record model="ir.ui.view" id="estate_etat_des_lieux_search">
+      <field name="name">estate.etat.des.lieux.search</field>
       <field name="model">estate.etat.des.lieux</field>
       <field name="arch" type="xml">
-        <tree string="États des Lieux">
+        <search>
+          <field name="name"/>
+          <field name="location_id"/>
+          <field name="responsable_id"/>
+          <separator/>
+          <filter string="Entrée" name="entree" domain="[('type', '=', 'entree')]"/>
+          <filter string="Sortie" name="sortie" domain="[('type', '=', 'sortie')]"/>
+          <separator/>
+          <filter string="Location" name="groupby_location" domain="[]" context="{'group_by': 'location_id'}"/>
+          <filter string="Responsable" name="groupby_responsable" domain="[]" context="{'group_by': 'responsable_id'}"/>
+          <filter string="Type" name="groupby_type" domain="[]" context="{'group_by': 'type'}"/>
+        </search>
+      </field>
+    </record>
+
+    <record model="ir.ui.view" id="estate_etat_des_lieux_list">
+      <field name="name">estate.etat.des.lieux.list</field>
+      <field name="model">estate.etat.des.lieux</field>
+      <field name="arch" type="xml">
+        <list>
           <field name="name"/>
           <field name="type"/>
           <field name="date"/>
           <field name="responsable_id"/>
           <field name="location_id"/>
-        </tree>
+        </list>
       </field>
     </record>
 
-    <!-- Vue formulaire des états des lieux -->
-    <record id="view_etat_des_lieux_form" model="ir.ui.view">
+    <record model="ir.ui.view" id="estate_etat_des_lieux_form">
       <field name="name">estate.etat.des.lieux.form</field>
       <field name="model">estate.etat.des.lieux</field>
       <field name="arch" type="xml">
-        <form string="État des Lieux">
-          <header>
-            <!-- Boutons d'action si besoin -->
-          </header>
-          <sheet>
-            <group>
-              <group>
-                <field name="name" required="1"/>
-                <field name="type" required="1"/>
-                <field name="date"/>
-              </group>
-              <group>
-                <field name="responsable_id"/>
-                <field name="location_id"/>
-              </group>
-            </group>
-            <!-- Groupe pour afficher les photos -->
-            <group string="Photos">
-              <field name="photo_entree" widget="image" class="oe_avatar" options="{'preview_image': 'photo_entree'}"/>
-              <field name="photo_sortie" widget="image" class="oe_avatar" options="{'preview_image': 'photo_sortie'}"/>
-            </group>
-          </sheet>
-          <notebook>
-            <!-- Autres pages si nécessaire -->
-          </notebook>
-          <footer>
-            <button string="Sauvegarder" type="object" class="oe_highlight"/>
-            <button string="Annuler" class="oe_link" special="cancel"/>
-          </footer>
+        <form>
+            <header>
+                <button type="object" name="action_print_report" string="Imprimer le rapport" class="oe_highlight"/>
+            </header>
+            <sheet>
+                <div class="oe_button_box" name="button_box">
+                    <button type="object" 
+                            name="action_print_report" 
+                            class="oe_stat_button" 
+                            icon="fa-file-pdf-o"
+                            string="Imprimer le rapport"/>
+                </div>
+                <div class="oe_title">
+                    <h1>
+                        <field name="name" readonly="0" placeholder="Référence de l'état des lieux"/>
+                    </h1>
+                </div>
+                <group>
+                    <group string="Informations générales">
+                        <field name="type" required="1"/>
+                        <field name="date" required="1"/>
+                        <field name="responsable_id" required="1"/>
+                        <field name="propriete_id" required="1" options="{'no_create': True}" 
+                               domain="[]" widget="selection"/>
+                        <field name="location_id" readonly="0" options="{'no_create': True, 'no_edit': True}" 
+                               required="1" domain="[('propriete_id', '=', propriete_id)]"/>
+                    </group>
+                    <group string="Détails">
+                        <field name="description" placeholder="Observations générales sur l'état du bien lors de la visite..."/>
+                    </group>
+                </group>
+                <notebook>
+                    <page name="commodites" string="Commodités vérifiées">
+                        <div class="alert alert-info" role="alert" style="margin-bottom:15px;">
+                            <p><strong>Information :</strong> Les commodités sont des équipements ou installations présents dans la propriété.
+                            Pour chaque commodité, notez son état actuel et prenez des photos si nécessaire.</p>
+                        </div>
+                        <group>
+                            <div>
+                                <button type="object"
+                                        name="action_create_commodite"
+                                        string="Créer une nouvelle commodité" 
+                                        class="oe_highlight"/>
+                            </div>
+                        </group>
+                        <field name="commodite_etat_ids" context="{'default_etat_des_lieux_id': id}">
+                            <list editable="bottom">
+                                <field name="commodite_id" domain="[('propriete_id', '=', parent.propriete_id)]" options="{'no_create': True}"/>
+                                <field name="piece_id" readonly="1"/>
+                                <field name="etat" widget="badge"
+                                    decoration-success="etat == 'bon' or etat == 'neuf'"
+                                    decoration-warning="etat == 'moyen'"
+                                    decoration-danger="etat == 'mauvais' or etat == 'absent'"/>
+                                <field name="notes"/>
+                            </list>
+                        </field>
+                        <field name="commodite_ids" invisible="1"/>
+                    </page>
+                    <page name="images" string="Images">
+                        <div class="alert alert-info" role="alert" style="margin-bottom:15px;">
+                            <p><strong>Information :</strong> Ajoutez des photos détaillées de chaque pièce et élément important.
+                            Ces images serviront de preuves en cas de litige sur l'état du bien immobilier.</p>
+                        </div>
+                        <field name="image_ids" mode="kanban">
+                            <kanban>
+                                <field name="id"/>
+                                <field name="name"/>
+                                <field name="notes"/>
+                                <field name="image"/>
+                                <field name="commodite_id"/>
+                                <templates>
+                                    <t t-name="kanban-box">
+                                        <div class="oe_kanban_global_click o_kanban_record_has_image_fill" style="height: 180px;">
+                                            <div class="o_kanban_image_fill_left" t-attf-style="background-image: url(data:image/png;base64,{{record.image.raw_value}})" style="height: 100%;">
+                                            </div>
+                                            <div class="oe_kanban_details">
+                                                <strong><field name="name"/></strong>
+                                                <div t-if="record.commodite_id.raw_value">
+                                                    <span>Commodité: </span><field name="commodite_id"/>
+                                                </div>
+                                                <div t-if="record.notes.raw_value">
+                                                    <span>Notes: </span><field name="notes"/>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </t>
+                                </templates>
+                            </kanban>
+                            <form>
+                                <sheet>
+                                    <field name="image" widget="image" class="oe_avatar"/>
+                                    <group>
+                                        <field name="name"/>
+                                        <field name="commodite_id"/>
+                                        <field name="notes"/>
+                                    </group>
+                                </sheet>
+                            </form>
+                        </field>
+                        <field name="image_ids">
+                            <list>
+                                <field name="name"/>
+                                <field name="commodite_id"/>
+                                <field name="notes"/>
+                                <field name="image" widget="image" options="{'size': [90, 90]}"/>
+                            </list>
+                        </field>
+                    </page>
+                </notebook>
+            </sheet>
+            <chatter/>
+        </form>
+      </field>
+    </record>
+    
+    <!-- Vue pour les images d'état des lieux -->
+    <record model="ir.ui.view" id="estate_etat_des_lieux_image_form">
+      <field name="name">estate.etat.des.lieux.image.form</field>
+      <field name="model">estate.etat.des.lieux.image</field>
+      <field name="arch" type="xml">
+        <form>
+            <sheet>
+                <field name="image" widget="image" class="oe_avatar"/>
+                <div class="oe_title">
+                    <h1>
+                        <field name="name" placeholder="Description de l'image"/>
+                    </h1>
+                </div>
+                <group>
+                    <group>
+                        <field name="etat_des_lieux_id"/>
+                        <field name="commodite_id" domain="[('etat_des_lieux_ids', 'in', etat_des_lieux_id)]"/>
+                    </group>
+                    <group>
+                        <field name="notes" placeholder="Notes sur l'image, état de l'élément photographié, dégradations constatées..."/>
+                    </group>
+                </group>
+            </sheet>
         </form>
       </field>
     </record>
 
-    <!-- Action pour accéder aux États des Lieux -->
-    <record model="ir.actions.act_window" id="action_etat_des_lieux">
-      <field name="name">États des Lieux</field>
+    <record model="ir.actions.act_window" id="etat_des_lieux_action">
+      <field name="name">États des lieux</field>
       <field name="res_model">estate.etat.des.lieux</field>
-      <field name="view_mode">tree,form</field>
+      <field name="view_mode">kanban,list,form</field>
+      <field name="help" type="html">
+        <p class="o_view_nocontent_smiling_face">
+          Créez votre premier état des lieux
+        </p>
+        <p>
+          L'état des lieux est un document essentiel qui constate l'état d'un bien immobilier
+          au début (état des lieux d'entrée) et à la fin (état des lieux de sortie) d'une location.
+          Il permet de comparer l'état du bien et d'identifier d'éventuelles dégradations.
+        </p>
+      </field>
     </record>
+
+    <!-- Action pour la fenêtre d'images d'état des lieux -->
+    <record model="ir.actions.act_window" id="etat_des_lieux_image_action">
+      <field name="name">Images d'état des lieux</field>
+      <field name="res_model">estate.etat.des.lieux.image</field>
+      <field name="view_mode">list,form</field>
+      <field name="help" type="html">
+        <p class="o_view_nocontent_smiling_face">
+          Ajoutez des images pour l'état des lieux
+        </p>
+        <p>
+          Les images sont essentielles pour documenter l'état réel du bien.
+          Elles servent de preuves en cas de litige concernant l'état du bien
+          entre le début et la fin de la location.
+        </p>
+      </field>
+    </record>
+
+    <!-- Etat des lieux Kanban View -->
+    <record model="ir.ui.view" id="estate_etat_des_lieux_kanban">
+        <field name="name">estate.etat.des.lieux.kanban</field>
+        <field name="model">estate.etat.des.lieux</field>
+        <field name="arch" type="xml">
+            <kanban default_group_by="type" class="o_kanban_small_column">
+                <field name="name"/>
+                <field name="type"/>
+                <field name="date"/>
+                <field name="responsable_id"/>
+                <field name="location_id"/>
+                <field name="images_count"/>
+                <templates>
+                    <t t-name="kanban-box">
+                        <div class="oe_kanban_global_click">
+                            <div class="oe_kanban_details">
+                                <div class="o_kanban_record_top mb-2">
+                                    <strong class="o_kanban_record_title">
+                                        <field name="name"/>
+                                    </strong>
+                                    <div class="o_kanban_tags_section float-end">
+                                        <span class="badge rounded-pill text-bg-info" t-if="record.type.raw_value == 'entree'">Entrée</span>
+                                        <span class="badge rounded-pill text-bg-warning" t-if="record.type.raw_value == 'sortie'">Sortie</span>
+                                        <span class="badge rounded-pill text-bg-secondary" t-if="record.type.raw_value == 'intermediaire'">Intermédiaire</span>
+                                    </div>
+                                </div>
+                                <div>
+                                    <i class="fa fa-calendar" title="Date" role="img" aria-label="Date"/> <field name="date"/>
+                                </div>
+                                <div>
+                                    <i class="fa fa-user" title="Responsable" role="img" aria-label="Responsable"/> <field name="responsable_id"/>
+                                </div>
+                                <div>
+                                    <i class="fa fa-home" title="Location" role="img" aria-label="Location"/> <field name="location_id"/>
+                                </div>
+                                <div t-if="record.images_count.raw_value > 0" class="mt-2">
+                                    <strong><i class="fa fa-camera"/> <field name="images_count"/> Photos</strong>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
   </data>
 </odoo>

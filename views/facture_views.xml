@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Facture Search View -->
+        <record model="ir.ui.view" id="estate_facture_search">
+            <field name="name">estate.facture.search</field>
+            <field name="model">estate.facture</field>
+            <field name="arch" type="xml">
+                <search>
+                    <field name="name"/>
+                    <field name="locataire_id"/>
+                    <field name="location_id"/>
+                    <field name="periode_debut"/>
+                    <field name="periode_fin"/>
+                    <separator/>
+                    <filter string="Brouillons" name="draft" domain="[('etat', '=', 'brouillon')]"/>
+                    <filter string="Envoyées" name="sent" domain="[('etat', '=', 'envoyee')]"/>
+                    <filter string="Payées" name="paid" domain="[('etat', '=', 'payee')]"/>
+                    <filter string="Annulées" name="cancelled" domain="[('etat', '=', 'annulee')]"/>
+                    <separator/>
+                    <filter string="Ce mois" name="this_month" domain="[('date', '&gt;=', (context_today() + relativedelta(day=1)).strftime('%Y-%m-%d')), ('date', '&lt;=', (context_today() + relativedelta(months=1, day=1, days=-1)).strftime('%Y-%m-%d'))]"/>
+                    <group expand="0" string="Regrouper par">
+                        <filter string="Locataire" name="locataire" context="{'group_by': 'locataire_id'}"/>
+                        <filter string="Location" name="location" context="{'group_by': 'location_id'}"/>
+                        <filter string="État" name="state" context="{'group_by': 'etat'}"/>
+                        <filter string="Mois" name="month" context="{'group_by': 'date:month'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <!-- Facture List View -->
+        <record model="ir.ui.view" id="estate_facture_list">
+            <field name="name">estate.facture.list</field>
+            <field name="model">estate.facture</field>
+            <field name="arch" type="xml">
+                <list>
+                    <field name="name" string="Référence"/>
+                    <field name="location_id"/>
+                    <field name="locataire_id"/>
+                    <field name="periode_debut" string="Période du"/>
+                    <field name="periode_fin" string="au"/>
+                    <field name="montant" sum="Total"/>
+                    <field name="date"/>
+                    <field name="etat" widget="badge"
+                        decoration-info="etat == 'brouillon'"
+                        decoration-success="etat == 'payee'"
+                        decoration-danger="etat == 'annulee'"
+                        decoration-warning="etat == 'envoyee'"/>
+                </list>
+            </field>
+        </record>
+
+        <!-- Facture Form View -->
+        <record model="ir.ui.view" id="estate_facture_form">
+            <field name="name">estate.facture.form</field>
+            <field name="model">estate.facture</field>
+            <field name="arch" type="xml">
+                <form>
+                    <header>
+                        <button name="action_envoyer" string="Envoyer" type="object" class="oe_highlight" 
+                                invisible="etat != 'brouillon'"/>
+                        <button name="action_payer" string="Marquer comme payée" type="object" class="oe_highlight" 
+                                invisible="etat != 'envoyee'"/>
+                        <button name="action_annuler" string="Annuler" type="object" 
+                                invisible="etat in ['payee', 'annulee']"/>
+                        <field name="etat" widget="statusbar" statusbar_visible="brouillon,envoyee,payee"/>
+                    </header>
+                    <sheet>
+                        <div class="alert alert-info" role="alert" style="margin-bottom:0px;" 
+                              invisible="etat != 'brouillon'">
+                            Cette facture est en brouillon. Vérifiez les informations avant de l'envoyer au locataire.
+                        </div>
+                        <div class="alert alert-warning" role="alert" style="margin-bottom:0px;" 
+                              invisible="etat != 'envoyee'">
+                            Cette facture a été envoyée au locataire et est en attente de paiement.
+                        </div>
+                        <div class="alert alert-success" role="alert" style="margin-bottom:0px;" 
+                              invisible="etat != 'payee'">
+                            Cette facture a été payée par le locataire.
+                        </div>
+                        <div class="alert alert-danger" role="alert" style="margin-bottom:0px;" 
+                              invisible="etat != 'annulee'">
+                            Cette facture a été annulée et n'est plus valide.
+                        </div>
+                        <div class="oe_title">
+                            <h1>
+                                <field name="name" placeholder="FAC/0001" readonly="1"/>
+                            </h1>
+                        </div>
+                        <group>
+                            <group>
+                                <field name="location_id" options="{'no_create': True}" required="1"/>
+                                <field name="locataire_id" readonly="1"/>
+                                <field name="date" required="1"/>
+                            </group>
+                            <group>
+                                <field name="periode_debut" required="1"/>
+                                <field name="periode_fin" required="1"/>
+                                <field name="montant" readonly="1" widget="monetary"/>
+                            </group>
+                        </group>
+                        <notebook>
+                            <page string="Notes" name="notes">
+                                <field name="notes" placeholder="Ajoutez des notes ou commentaires concernant cette facture (visible uniquement en interne)..."/>
+                            </page>
+                        </notebook>
+                    </sheet>
+                    <chatter/>
+                </form>
+            </field>
+        </record>
+
+        <!-- Facture Action -->
+        <record model="ir.actions.act_window" id="facture_action">
+            <field name="name">Factures</field>
+            <field name="res_model">estate.facture</field>
+            <field name="view_mode">list,form</field>
+            <field name="context">{'search_default_draft': 1}</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Créer votre première facture
+                </p>
+                <p>
+                    Les factures permettent de suivre les paiements de loyer pour chaque location.
+                    Vous pouvez générer des factures mensuelles pour les locataires et suivre leur état de paiement.
+                </p>
+            </field>
+        </record>
+    </data>
+</odoo> 

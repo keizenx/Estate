@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Mise à jour des actions pour inclure les vues supplémentaires -->
+    <!-- Location -->
+    <record id="location_action" model="ir.actions.act_window">
+        <field name="name">Locations</field>
+        <field name="res_model">estate.location</field>
+        <field name="view_mode">kanban,list,form,pivot,graph</field>
+    </record>
+    
+    <!-- Propriété -->
+    <record id="propriete_action" model="ir.actions.act_window">
+        <field name="name">Propriétés</field>
+        <field name="res_model">estate.propriete</field>
+        <field name="view_mode">kanban,list,form,pivot,graph</field>
+    </record>
+    
+    <!-- État des lieux -->
+    <record id="etat_des_lieux_action" model="ir.actions.act_window">
+        <field name="name">États des lieux</field>
+        <field name="res_model">estate.etat.des.lieux</field>
+        <field name="view_mode">kanban,list,form,pivot</field>
+    </record>
+    
+    <!-- Facture -->
+    <record id="facture_action" model="ir.actions.act_window">
+        <field name="name">Factures</field>
+        <field name="res_model">estate.facture</field>
+        <field name="view_mode">kanban,list,form,pivot,graph</field>
+    </record>
+    
+    <!-- Rappel -->
+    <record id="rappel_action" model="ir.actions.act_window">
+        <field name="name">Rappels</field>
+        <field name="res_model">estate.rappel</field>
+        <field name="view_mode">kanban,list,form,pivot</field>
+    </record>
+</odoo> 

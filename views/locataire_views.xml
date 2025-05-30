@@ -1,41 +1,131 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <!-- Inheritance du formulaire partenaire pour ajouter l'onglet "Locations" -->
-    <record id="res_partner_form_inherit" model="ir.ui.view">
-        <field name="name">res.partner.form.inherit.locataires</field>
+    <!-- Vue liste simplifiée pour les locataires -->
+    <record id="estate_locataire_tree_view" model="ir.ui.view">
+        <field name="name">estate.locataire.tree</field>
         <field name="model">res.partner</field>
-        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="priority">999</field>
         <field name="arch" type="xml">
-            <!-- On ajoute l'onglet "Locations" avant la page "Internal Notes" -->
-            <page name="internal_notes" position="before">
-                <page name="locations" string="Locations">
-                    <field name="location_ids">
-                        <list editable="bottom" readonly="True">
-                            <field name="name"/>
-                            <field name="propriete_id"/>
-                            <field name="date_de_reservation"/>
-                            <field name="date_de_debut"/>
-                            <field name="duree_en_annee"/>
-                            <field name="date_de_fin"/>
-                            <field name="frequence"/>
-                            <field name="loyer"/>
-                        </list>
-                    </field>
-                </page>
-            </page>
-            <!-- On place le champ "est_un_locataire" en mode invisible pour le suivi -->
-            <field name="category_id" position="after">
-                <field name="est_un_locataire" widget="boolean_toggle" invisible="1"/>
-            </field>
+            <list string="Locataires">
+                <field name="name"/>
+                <field name="email"/>
+                <field name="phone"/>
+                <field name="vat" string="Numéro d'identité"/>
+                <field name="city"/>
+                <field name="country_id"/>
+            </list>
         </field>
     </record>
 
-    <!-- Action pour le menu "Locataires" qui filtre uniquement ceux marqués comme locataires -->
+    <!-- Vue kanban pour les locataires -->
+    <record id="estate_locataire_kanban_view" model="ir.ui.view">
+        <field name="name">estate.locataire.kanban</field>
+        <field name="model">res.partner</field>
+        <field name="priority">999</field>
+        <field name="arch" type="xml">
+            <kanban string="Locataires" sample="1">
+                <field name="id"/>
+                <field name="name"/>
+                <field name="email"/>
+                <field name="phone"/>
+                <field name="city"/>
+                <field name="country_id"/>
+                <field name="image_128"/>
+                <templates>
+                    <t t-name="kanban-box">
+                        <div class="oe_kanban_global_click o_kanban_record_has_image_fill o_res_partner_kanban">
+                            <div class="o_kanban_image_fill_left d-none d-md-block" t-attf-style="background-image: url(#{kanban_image('res.partner', 'image_128', record.id.raw_value)}); background-position: center; background-size: cover;">
+                                <img class="o_kanban_image_inner_pic" t-if="!record.image_128.raw_value" t-att-src="'/web/static/img/avatar_grey.png'" alt="Avatar"/>
+                            </div>
+                            <div class="oe_kanban_details">
+                                <strong class="o_kanban_record_title">
+                                    <field name="name"/>
+                                </strong>
+                                <div t-if="record.city.raw_value or record.country_id.raw_value" class="o_kanban_tags_section">
+                                    <span t-if="record.city.raw_value" class="badge">
+                                        <t t-esc="record.city.value"/>
+                                    </span>
+                                    <span t-if="record.country_id.raw_value" class="badge">
+                                        <t t-esc="record.country_id.value"/>
+                                    </span>
+                                </div>
+                                <ul>
+                                    <li t-if="record.phone.raw_value">
+                                        <field name="phone" widget="phone"/>
+                                    </li>
+                                    <li t-if="record.email.raw_value">
+                                        <field name="email" widget="email"/>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- Vue formulaire très simplifiée pour les locataires -->
+    <record id="estate_locataire_form_view_custom" model="ir.ui.view">
+        <field name="name">estate.locataire.form.custom</field>
+        <field name="model">res.partner</field>
+        <field name="priority">999</field>
+        <field name="arch" type="xml">
+            <form string="Locataire">
+                <sheet>
+                    <field name="image_1920" widget="image" class="oe_avatar" options="{'preview_image': 'image_128'}"/>
+                    <h1 style="color: #7C7BAD;">LOCATAIRE : <field name="name" placeholder="Nom du locataire"/></h1>
+                    <group>
+                        <group string="INFORMATIONS DE CONTACT">
+                            <field name="email" widget="email"/>
+                            <field name="phone" widget="phone"/>
+                            <field name="vat" string="Numéro d'identité"/>
+                        </group>
+                        <group string="ADRESSE">
+                            <field name="country_id" string="Pays de résidence"/>
+                            <field name="city" string="Ville"/>
+                        </group>
+                    </group>
+                    <separator string="DOCUMENTS" style="color: #7C7BAD;"/>
+                    <group>
+                        <field name="document_ids" widget="many2many_binary" string="Documents administratifs"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Fenêtre d'action pour les locataires avec références explicites aux vues -->
     <record model="ir.actions.act_window" id="locataire_action">
         <field name="name">Locataires</field>
         <field name="res_model">res.partner</field>
-        <field name="view_mode">list,form</field>
+        <field name="view_mode">kanban,list,form</field>
         <field name="domain">[('est_un_locataire', '=', True)]</field>
-        <field name="context">{'est_un_locataire': True}</field>
+        <field name="context">{'default_est_un_locataire': True}</field>
+        <field name="view_ids" eval="[(5, 0, 0), 
+                                     (0, 0, {'view_mode': 'kanban', 'view_id': ref('estate_locataire_kanban_view')}),
+                                     (0, 0, {'view_mode': 'list', 'view_id': ref('estate_locataire_tree_view')}),
+                                     (0, 0, {'view_mode': 'form', 'view_id': ref('estate_locataire_form_view_custom')})]"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Créez votre premier locataire
+            </p>
+            <p>
+                Les locataires sont les personnes à qui vous louez vos propriétés.
+            </p>
+        </field>
+    </record>
+
+    <!-- Définir mode="primary" sur nos vues pour forcer leur utilisation -->
+    <record id="estate_locataire_tree_view" model="ir.ui.view">
+        <field name="mode">primary</field>
+    </record>
+
+    <record id="estate_locataire_form_view_custom" model="ir.ui.view">
+        <field name="mode">primary</field>
+    </record>
+    
+    <record id="estate_locataire_kanban_view" model="ir.ui.view">
+        <field name="mode">primary</field>
     </record>
 </odoo>

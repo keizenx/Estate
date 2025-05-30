@@ -9,3 +9,5 @@ from . import piece
 from . import type_de_propriete
 from . import type_de_piece
 from . import commodite
+from . import rappel
+from . import facture

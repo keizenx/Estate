@@ -1,0 +1,140 @@
+<odoo>
+  <data>
+    <!-- Vue de recherche pour les pièces -->
+    <record model="ir.ui.view" id="estate_piece_search">
+      <field name="name">estate.piece.search</field>
+      <field name="model">estate.piece</field>
+      <field name="arch" type="xml">
+        <search>
+          <field name="name"/>
+          <field name="type_id"/>
+          <field name="propriete_id"/>
+          <separator/>
+          <filter string="Type de pièce" name="groupby_type" domain="[]" context="{'group_by': 'type_id'}"/>
+          <filter string="Propriété" name="groupby_propriete" domain="[]" context="{'group_by': 'propriete_id'}"/>
+        </search>
+      </field>
+    </record>
+
+    <!-- Vue liste pour les pièces -->
+    <record model="ir.ui.view" id="estate_piece_list">
+      <field name="name">estate.piece.list</field>
+      <field name="model">estate.piece</field>
+      <field name="arch" type="xml">
+        <list>
+          <field name="name"/>
+          <field name="type_id"/>
+          <field name="propriete_id"/>
+          <field name="superficie"/>
+        </list>
+      </field>
+    </record>
+
+    <!-- Vue formulaire pour les pièces -->
+    <record model="ir.ui.view" id="estate_piece_form">
+      <field name="name">estate.piece.form</field>
+      <field name="model">estate.piece</field>
+      <field name="arch" type="xml">
+        <form>
+          <sheet>
+            <div class="oe_title">
+              <h1>
+                <field name="name" placeholder="Nom de la pièce" required="1"/>
+              </h1>
+            </div>
+            <group>
+              <group>
+                <field name="type_id" options="{'no_create': False, 'no_open': False}" required="1"/>
+                <field name="superficie" required="1"/>
+              </group>
+              <group>
+                <field name="propriete_id" options="{'no_create': True}" required="1"/>
+              </group>
+            </group>
+            <notebook>
+              <page name="commodites" string="Commodités">
+                <field name="commodite_ids" context="{'default_piece_id': id, 'default_propriete_id': propriete_id}">
+                  <list editable="bottom">
+                    <field name="name"/>
+                    <field name="description"/>
+                    <field name="image" widget="image" options="{'size': [90, 90]}"/>
+                  </list>
+                </field>
+              </page>
+            </notebook>
+          </sheet>
+          <chatter/>
+        </form>
+      </field>
+    </record>
+
+    <!-- Vue de formulaire simplifiée pour l'ajout rapide -->
+    <record model="ir.ui.view" id="estate_piece_form_simple">
+      <field name="name">estate.piece.form.simple</field>
+      <field name="model">estate.piece</field>
+      <field name="arch" type="xml">
+        <form>
+          <group>
+            <field name="name" placeholder="Nom de la pièce" required="1"/>
+            <field name="type_id" options="{'no_create': False, 'no_open': False}" required="1"/>
+            <field name="superficie" required="1"/>
+            <field name="propriete_id" invisible="context.get('hide_propriete_id', False)" required="1"/>
+          </group>
+          <footer>
+            <button string="Enregistrer" type="object" name="action_save" class="btn-primary"/>
+            <button string="Enregistrer et Nouveau" type="object" name="action_save_and_new" class="btn-secondary"/>
+            <button string="Annuler" class="btn-secondary" special="cancel"/>
+          </footer>
+        </form>
+      </field>
+    </record>
+
+    <!-- Vue kanban pour les pièces -->
+    <record model="ir.ui.view" id="estate_piece_kanban">
+      <field name="name">estate.piece.kanban</field>
+      <field name="model">estate.piece</field>
+      <field name="arch" type="xml">
+        <kanban>
+          <field name="id"/>
+          <field name="name"/>
+          <field name="type_id"/>
+          <field name="propriete_id"/>
+          <field name="superficie"/>
+          <templates>
+            <t t-name="kanban-box">
+              <div class="oe_kanban_global_click">
+                <div class="oe_kanban_details">
+                  <strong class="o_kanban_record_title">
+                    <field name="name"/>
+                  </strong>
+                  <ul>
+                    <li t-if="record.type_id.raw_value"><strong>Type:</strong> <field name="type_id"/></li>
+                    <li t-if="record.propriete_id.raw_value"><strong>Propriété:</strong> <field name="propriete_id"/></li>
+                    <li t-if="record.superficie.raw_value"><strong>Surface:</strong> <field name="superficie"/> m²</li>
+                  </ul>
+                </div>
+              </div>
+            </t>
+          </templates>
+        </kanban>
+      </field>
+    </record>
+
+    <!-- Action principale pour les pièces -->
+    <record model="ir.actions.act_window" id="piece_action">
+      <field name="name">Pièces</field>
+      <field name="res_model">estate.piece</field>
+      <field name="view_mode">kanban,list,form</field>
+      <field name="help" type="html">
+        <p class="o_view_nocontent_smiling_face">
+          Créez votre première pièce
+        </p>
+        <p>
+          Enregistrez ici les différentes pièces qui composent vos propriétés.
+          Une pièce peut être associée à une propriété et avoir un type spécifique.
+        </p>
+      </field>
+    </record>
+
+  </data>
+</odoo>

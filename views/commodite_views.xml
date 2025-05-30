@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Vue de recherche des commodités -->
+        <record id="view_commodite_search" model="ir.ui.view">
+            <field name="name">estate.commodite.search</field>
+            <field name="model">estate.commodite</field>
+            <field name="arch" type="xml">
+                <search string="Commodités">
+                    <field name="name"/>
+                    <field name="piece_id"/>
+                    <field name="propriete_id"/>
+                    <group expand="0" string="Regrouper par">
+                        <filter string="Pièce" name="piece" context="{'group_by':'piece_id'}"/>
+                        <filter string="Propriété" name="propriete" context="{'group_by':'propriete_id'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <!-- Vue liste des commodités -->
+        <record id="view_commodite_tree" model="ir.ui.view">
+            <field name="name">estate.commodite.tree</field>
+            <field name="model">estate.commodite</field>
+            <field name="arch" type="xml">
+                <list>
+                    <field name="name"/>
+                    <field name="piece_id"/>
+                    <field name="propriete_id"/>
+                    <field name="description"/>
+                    <field name="image" widget="image" options="{'size': [90, 90]}"/>
+                </list>
+            </field>
+        </record>
+
+        <!-- Vue formulaire des commodités -->
+        <record id="view_commodite_form" model="ir.ui.view">
+            <field name="name">estate.commodite.form</field>
+            <field name="model">estate.commodite</field>
+            <field name="arch" type="xml">
+                <form string="Commodité">
+                    <sheet>
+                        <field name="image" widget="image" class="oe_avatar" options="{'preview_image': 'image'}"/>
+                        <div class="oe_title">
+                            <h1>
+                                <field name="name" placeholder="Nom de la commodité..."/>
+                            </h1>
+                        </div>
+                        <group>
+                            <group>
+                                <field name="piece_id" domain="[('propriete_id', '=', propriete_id)]" options="{'no_create_edit': True}"/>
+                                <field name="propriete_id" options="{'no_create_edit': True}"/>
+                            </group>
+                            <group>
+                                <field name="description" placeholder="Description de la commodité..."/>
+                            </group>
+                        </group>
+                        <notebook>
+                            <page string="États des lieux" name="etats_des_lieux">
+                                <field name="etat_des_lieux_ids" readonly="1">
+                                    <list>
+                                        <field name="name"/>
+                                    </list>
+                                </field>
+                            </page>
+                        </notebook>
+                    </sheet>
+                    <chatter/>
+                </form>
+            </field>
+        </record>
+
+        <!-- Action pour les commodités -->
+        <record id="commodite_action" model="ir.actions.act_window">
+            <field name="name">Commodités</field>
+            <field name="res_model">estate.commodite</field>
+            <field name="view_mode">list,form</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Créez votre première commodité
+                </p>
+                <p>
+                    Les commodités sont des équipements ou installations présents dans une propriété
+                    (chauffage, électroménager, baignoire, etc.). Elles sont évaluées lors des états des lieux.
+                </p>
+            </field>
+        </record>
+        
+        <!-- Vue de recherche des états de commodités -->
+        <record id="view_commodite_etat_search" model="ir.ui.view">
+            <field name="name">estate.commodite.etat.search</field>
+            <field name="model">estate.commodite.etat</field>
+            <field name="arch" type="xml">
+                <search string="États des commodités">
+                    <field name="commodite_id"/>
+                    <field name="etat_des_lieux_id"/>
+                    <field name="piece_id"/>
+                    <field name="etat"/>
+                    <filter string="Bon état" name="bon_etat" domain="[('etat', 'in', ['bon', 'neuf'])]"/>
+                    <filter string="État moyen" name="moyen_etat" domain="[('etat', '=', 'moyen')]"/>
+                    <filter string="Problèmes" name="problemes" domain="[('etat', 'in', ['mauvais', 'absent'])]"/>
+                    <group expand="0" string="Regrouper par">
+                        <filter string="État des lieux" name="etat_des_lieux" context="{'group_by': 'etat_des_lieux_id'}"/>
+                        <filter string="Pièce" name="piece" context="{'group_by': 'piece_id'}"/>
+                        <filter string="État" name="etat" context="{'group_by': 'etat'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <!-- Vue liste des états de commodités -->
+        <record id="view_commodite_etat_tree" model="ir.ui.view">
+            <field name="name">estate.commodite.etat.tree</field>
+            <field name="model">estate.commodite.etat</field>
+            <field name="arch" type="xml">
+                <list>
+                    <field name="commodite_id"/>
+                    <field name="piece_id"/>
+                    <field name="etat_des_lieux_id"/>
+                    <field name="etat" widget="badge"
+                        decoration-success="etat == 'bon' or etat == 'neuf'"
+                        decoration-warning="etat == 'moyen'"
+                        decoration-danger="etat == 'mauvais' or etat == 'absent'"/>
+                    <field name="notes"/>
+                </list>
+            </field>
+        </record>
+
+        <!-- Vue formulaire des états de commodités -->
+        <record id="view_commodite_etat_form" model="ir.ui.view">
+            <field name="name">estate.commodite.etat.form</field>
+            <field name="model">estate.commodite.etat</field>
+            <field name="arch" type="xml">
+                <form string="État d'une commodité">
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="commodite_id" options="{'no_create': True}"/>
+                                <field name="etat_des_lieux_id" options="{'no_create': True}"/>
+                                <field name="piece_id" readonly="1"/>
+                            </group>
+                            <group>
+                                <field name="etat" widget="selection"/>
+                                <field name="notes" placeholder="Remarques sur l'état de cette commodité..."/>
+                            </group>
+                        </group>
+                        <notebook>
+                            <page string="Photos" name="photos">
+                                <field name="image_ids">
+                                    <kanban>
+                                        <field name="id"/>
+                                        <field name="name"/>
+                                        <field name="image"/>
+                                        <templates>
+                                            <t t-name="kanban-box">
+                                                <div class="oe_kanban_global_click o_kanban_record_has_image_fill">
+                                                    <div class="o_kanban_image_fill_left d-none d-md-block" t-attf-style="background-image: url(data:image/png;base64,{{record.image.raw_value}})"/>
+                                                    <div class="oe_kanban_details">
+                                                        <strong><field name="name"/></strong>
+                                                        <ul>
+                                                            <li t-if="record.notes.raw_value"><field name="notes"/></li>
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                            </t>
+                                        </templates>
+                                    </kanban>
+                                </field>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        
+        <!-- Action pour les états de commodités -->
+        <record id="commodite_etat_action" model="ir.actions.act_window">
+            <field name="name">États des commodités</field>
+            <field name="res_model">estate.commodite.etat</field>
+            <field name="view_mode">list,form</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Aucun état de commodité enregistré
+                </p>
+                <p>
+                    Les états des commodités sont créés lors des états des lieux pour évaluer
+                    la condition de chaque équipement ou installation.
+                </p>
+            </field>
+        </record>
+
+        <!-- Nous avons temporairement supprimé le menuitem pour éviter les erreurs -->
+    </data>
+</odoo>

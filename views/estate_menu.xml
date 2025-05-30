@@ -1,13 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
 <odoo>
   <data>
-
-    <menuitem name="estate" id="estat_menu_root" web_icon="estate,static/description/icon.png"/>
+    <!-- Menu principal -->
+    <menuitem name="Estate" id="estat_menu_root" web_icon="Estate_sk,static/description/icon.png"/>
+    
+    <!-- Menu principal -->
     <menuitem name="Locations" id="location_menu" parent="estat_menu_root" sequence="1" action="location_action"/>
     <menuitem name="Propriétés" id="propriete_menu" parent="estat_menu_root" sequence="2" action="propriete_action"/>
     <menuitem name="Locataires" id="locataire_menu" parent="estat_menu_root" sequence="3" action="locataire_action"/>
+    <menuitem name="États des lieux" id="etat_des_lieux_menu" parent="estat_menu_root" sequence="4" action="etat_des_lieux_action"/>
+    <menuitem name="Factures" id="facture_menu" parent="estat_menu_root" sequence="5" action="facture_action"/>
+    <menuitem name="Rappels" id="rappel_menu" parent="estat_menu_root" sequence="6" action="rappel_action"/>
+    
+    <!-- Menu de configuration -->
     <menuitem name="Configuration" id="estat_config" parent="estat_menu_root" sequence="1000"/>
-    <menuitem name="Types de Propriété" id="type_de_propriete" parent="estat_config" sequence="1" action="type_de_propriete_action"/>
-    <menuitem name="Types de Pièce" id="type_de_piece" parent="estat_config" sequence="2" action="type_de_piece_action"/>
-
+    <menuitem name="Types de Propriété" id="type_de_propriete" parent="estat_config" sequence="1" action="type_de_propriete_action" groups="Estate_sk.group_estate_user"/>
+    <menuitem name="Types de Pièce" id="type_de_piece" parent="estat_config" sequence="2" action="type_de_piece_action" groups="Estate_sk.group_estate_user"/>
+    <menuitem name="Images d'état des lieux" id="etat_des_lieux_image_menu" parent="estat_config" sequence="3" action="etat_des_lieux_image_action" groups="Estate_sk.group_estate_admin"/>
+    <menuitem name="Commodités" id="menu_estate_commodite" parent="estat_config" sequence="4" action="commodite_action" groups="Estate_sk.group_estate_user"/>
+    
+    <!-- Menu pour la gestion des utilisateurs et des droits -->
+    <menuitem name="Utilisateurs" id="users_config" parent="estat_config" sequence="100"/>
+    <menuitem name="Utilisateurs Estate" id="estate_users" parent="users_config" sequence="1" action="base.action_res_users" groups="Estate_sk.group_estate_admin"/>
+    <menuitem name="Groupes d'accès" id="estate_groups" parent="users_config" sequence="2" action="base.action_res_groups" groups="Estate_sk.group_estate_admin"/>
+    
+    <!-- Menus additionnels -->
+    <menuitem id="menu_estate_locations" 
+              name="Locations" 
+              parent="estat_menu_root" 
+              action="location_action" 
+              sequence="20"/>
+              
+    <menuitem id="menu_estate_pieces" 
+              name="Pièces" 
+              parent="estat_menu_root" 
+              action="piece_action" 
+              sequence="15"/>
   </data>
 </odoo>
